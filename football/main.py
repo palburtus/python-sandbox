@@ -6,7 +6,7 @@ team_abbreviation = ['Dal', 'Was', 'NYG', 'Phi', 'NE', 'NYJ', 'Mia', 'Buf', 'TB'
 
 draftedTeams = list()
 draftedPlayers = list()
-allPlayers = list()
+allPlayers = dict()
 
 teamNameSpillter = ",,"
 with open(r"C:\Users\patri\Google Drive\CBML\2020\2019-Draft.csv") as f:
@@ -37,12 +37,35 @@ with open(r"C:\Users\patri\Google Drive\CBML\2020\2019-Draft.csv") as f:
                 position = position.replace('"', '')
                 draftee = Player(name, position, team, int(cost), team_name)
                 draftedPlayers.append(draftee)
-                allPlayers.append(draftee)
+                allPlayers[name] = draftee
 
         team = TeamDraft(team_name, draftedPlayers)
         draftedTeams.append(team)
         draftedPlayers = list()
-    for t in draftedTeams:
-        
-        for d in t.draftees:
-            print("%s - NFL Team: %s Position: %s Cost: $%d Drafted by: %s" % (d.player_name, d.team, d.position, d.cost, d.drafted_team))
+
+with open(r"C:\Users\patri\Google Drive\CBML\2020\airyards_2019.csv") as f:
+    lines = f.readlines()
+    team_name = ''
+    for l in lines:
+        if("full_name" not in l):
+            csvs = l.split(',')
+            player_name = csvs[1].replace('"', '')
+            player_position = csvs[2].replace('"', '')
+            player_team = csvs[3].replace('"', '')
+            player_air_yards = csvs[7].replace('"', '')
+            player_wopr = csvs[14].replace('"', '')
+            p = allPlayers.get(player_name)
+            if p is not None:
+                airYards_player = allPlayers[player_name]
+                airYards_player.set_ay(player_air_yards, player_wopr)
+                allPlayers[player_name] = airYards_player
+            else:
+                airYards_player = Player(player_name, player_position, player_team)
+                airYards_player.set_ay(player_air_yards, player_wopr)
+                allPlayers[player_name] = airYards_player
+
+
+
+for k,v in allPlayers.items():
+    p = allPlayers[k]
+    print("%s - NFL Team: %s Position: %s Cost: $%d Drafted by: %s Air Yards: %s WOPR: %s" % (p.player_name, p.team, p.position, p.cost, p.drafted_team, p.ay, p.wopr))
