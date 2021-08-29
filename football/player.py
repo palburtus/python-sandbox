@@ -44,4 +44,7 @@ class Player:
 
     def set_note(self, note):
         self.note = note
+
+    def add_tds(self, tds):
+        self.tds += tds
         

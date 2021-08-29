@@ -105,7 +105,7 @@ def run():
                 if p is not None:
                     airYards_player = allPlayers[player_name]
                     airYards_player.set_ay(float(player_air_yards), 0)
-                    airYards_player.set_tds(player_tds)
+                    airYards_player.set_tds(int(player_tds))
                     allPlayers[player_name] = airYards_player            
 
 
@@ -126,7 +126,7 @@ def run():
                 if p is not None:
                     rush_player = allPlayers[player_name]
                     rush_player.set_rush_yards(float(player_rush_attemps), float(player_ypa))
-                    rush_player.set_tds(player_td)
+                    rush_player.add_tds(int(player_td))
                     allPlayers[player_name] = rush_player            
 
     with open(r"C:\Users\patri\Google Drive\Fantasy Football\2021\2021_keepers.csv") as f:
