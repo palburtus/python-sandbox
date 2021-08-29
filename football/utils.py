@@ -23,4 +23,6 @@ def normalize_name(name):
 
     name = name.replace('.', '')
 
+    name = name.strip()
+
     return name
