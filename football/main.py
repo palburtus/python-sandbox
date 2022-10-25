@@ -18,7 +18,7 @@ def run():
     allPlayers = dict()
     playerNames = list()
 
-    with open(r"C:\Users\patri\Google Drive\Fantasy Football\2021\rotoworld_2021_rankings.csv") as f:
+    with open(r"G:\My Drive\Fantasy Football\2022\rotoworld_2022_rankings.csv") as f:
         lines = f.readlines()
         for l in lines:
             if("Player" not in l):
@@ -37,7 +37,7 @@ def run():
 
 
     teamNameSpillter = ",,"
-    with open(r"C:\Users\patri\Google Drive\Fantasy Football\2021\2020-Draft.csv") as f:
+    with open(r"G:\My Drive\Fantasy Football\2022\2021-Draft.csv") as f:
         lines = f.readlines()
         team_name = ''
         for l in lines:
@@ -49,7 +49,7 @@ def run():
                 team_name = team_name.replace('ï»¿', '')
                 team_name = team_name.strip()
             else:
-                if("BID AMOUNT" not in l):
+                if("OFFER AMOUNT" not in l):
                     csvs = l.split(',')
                     if len(csvs) > 3:
                         name = csvs[1].replace('"', '')
@@ -63,8 +63,9 @@ def run():
                         name = name.strip()
                         
 
-                        position = csvs[2].replace('"', '')
-                        position = position.replace(' ', '')
+                        #position = csvs[2].replace('"', '')
+                        #position = position.replace(' ', '')
+                        
                         cost = csvs[3].replace('$', '')
                         cost = cost.replace('\n', '')
                         is_keeper_symbol = csvs[4].replace('"', '')
@@ -72,7 +73,7 @@ def run():
                         if("K" in is_keeper_symbol):
                             is_keeper = True
                 
-                        position = position.replace('"', '')
+                        #position = position.replace('"', '')
 
                         name = normalize_name(name)
 
@@ -89,17 +90,17 @@ def run():
             draftedTeams.append(team)
             draftedPlayers = list()
 
-    with open(r"C:\Users\patri\Google Drive\Fantasy Football\2021\airyards_2020.csv") as f:
+    with open(r"G:\My Drive\Fantasy Football\2022\2021_airyards.csv") as f:
         lines = f.readlines()
         team_name = ''
         for l in lines:
-            if("full_name" not in l):
+            if("Name" not in l):
                 csvs = l.split(',')
                 player_name = csvs[1].replace('"', '').replace('*+', '').replace('*', '')
                 player_position = csvs[2].replace('"', '')
-                player_team = csvs[3].replace('"', '')
-                player_air_yards = csvs[7].replace('"', '')
-                player_tds = csvs[9].replace('"', '')
+                #player_team = csvs[3].replace('"', '')
+                player_air_yards = csvs[4].replace('"', '')
+                player_tds = csvs[14].replace('"', '')
                 player_name = normalize_name(player_name)
                 p = allPlayers.get(player_name)
                 if p is not None:
@@ -109,7 +110,7 @@ def run():
                     allPlayers[player_name] = airYards_player            
 
 
-    with open(r"C:\Users\patri\Google Drive\Fantasy Football\2021\runningback_workload.csv") as f:
+    with open(r"G:\My Drive\Fantasy Football\2022\2021_runningback_workload.csv") as f:
         lines = f.readlines()
         for l in lines:
             if("Name" not in l):
@@ -118,7 +119,7 @@ def run():
                 player_name = csvs[0].replace('"', '').replace('*+', '').replace('*', '')
                 player_team = csvs[1].replace('"', '')    
                 player_position = csvs[2].replace('"', '')
-                player_rush_attemps = csvs[4].replace('"', '')
+                player_rush_attemps = csvs[3].replace('"', '')
                 player_ypa = csvs[5].replace('"', '')
                 player_td = csvs[6].replace('"', '')
                 player_name = normalize_name(player_name)
@@ -129,7 +130,7 @@ def run():
                     rush_player.add_tds(int(player_td))
                     allPlayers[player_name] = rush_player            
 
-    with open(r"C:\Users\patri\Google Drive\Fantasy Football\2021\2021_keepers.csv") as f:
+    with open(r"G:\My Drive\Fantasy Football\2022\2022_keepers.csv") as f:
         lines = f.readlines()
         for l in lines:
             csvs = l.split(",")
@@ -142,19 +143,20 @@ def run():
                 keeper_player.set_2020_is_keeper(True)
                 allPlayers[keeper_name] = keeper_player
 
-    #with open(r"C:\Users\patri\Google Drive\Fantasy Football\2020\2020_adp.csv") as f:
-    #    lines = f.readlines()
-    #    for l in lines:
-    #        csvs = l.split(",")
-    #        adp_name = csvs[0].replace('"', '')
-    #        adp = csvs[13].replace('"', '')
-    #        p = allPlayers.get(adp_name)
-    #        if p is not None:
-    #            adp_player = allPlayers[adp_name]
-    #            adp_player.set_adp(adp)
-    #            allPlayers[adp_name] = adp_player
+    with open(r"G:\My Drive\Fantasy Football\2022\2022_adp.csv") as f:
+        lines = f.readlines()
+        for l in lines:
+            csvs = l.split(",")
+            adp_name = csvs[1].replace('"', '')
+            adp = csvs[14].replace('"', '')
+            adp = adp.replace('\n', '')
+            p = allPlayers.get(adp_name)
+            if p is not None:
+                adp_player = allPlayers[adp_name]
+                adp_player.set_adp(adp)
+                allPlayers[adp_name] = adp_player
 
-    with open(r"C:\Users\patri\Google Drive\Fantasy Football\2021\notes.csv") as f:
+    with open(r"G:\My Drive\Fantasy Football\2022\notes.csv") as f:
         lines = f.readlines()
         for l in lines:
             csvs = l.split(",")
@@ -170,10 +172,10 @@ def run():
             note_player = allPlayers[k]
             note_player.set_note(note)            
     
-    with open(r"C:\Users\patri\Google Drive\Fantasy Football\2020\notes.csv", 'w') as f:
+    '''with open(r"G:\My Drive\Fantasy Football\2022\notes.csv", 'w') as f:
         for key in notes:
             f.writelines('%s,%s\n' % (key, notes[key]))
-        
+    '''    
     
     json_string = "["
 
@@ -185,7 +187,7 @@ def run():
     json_string = json_string[:-1]
     json_string += "]"
 
-    with open(r"C:\Users\patri\Documents\Sources\fantasy-football-client\client\src\data_2021.json", 'w', encoding='utf-8') as f:
+    with open(r"C:\Users\patri\Documents\Sources\fantasy-football-client\client\src\data.json", 'w', encoding='utf-8') as f:
         json.dump(json_string, f, ensure_ascii=False, indent=4)
     print(json_string)
     create_note()
@@ -199,8 +201,8 @@ def create_note():
     print("Note Saved: " + player_name_note + " - " + player_note)
     notes[player_name_note] = player_note
     run()
-    
-
 run()
+create_note()
+
 
 
