@@ -1,4 +1,5 @@
 import re 
+import pyperclip
 from team_draft import TeamDraft
 from player import Player
 import json
@@ -18,7 +19,7 @@ def run():
     allPlayers = dict()
     playerNames = list()
 
-    with open(r"G:\My Drive\Fantasy Football\2022\rotoworld_2022_rankings.csv") as f:
+    with open(r"C:\Users\patri\Desktop\rotoworldrankings.csv") as f:
         lines = f.readlines()
         for l in lines:
             if("Player" not in l):
@@ -37,7 +38,7 @@ def run():
 
 
     teamNameSpillter = ",,"
-    with open(r"G:\My Drive\Fantasy Football\2022\2021-Draft.csv") as f:
+    with open(r"G:\My Drive\Fantasy Football\2023\2022_draft.csv") as f:
         lines = f.readlines()
         team_name = ''
         for l in lines:
@@ -90,23 +91,23 @@ def run():
             draftedTeams.append(team)
             draftedPlayers = list()
 
-    with open(r"G:\My Drive\Fantasy Football\2022\2021_airyards.csv") as f:
+    with open(r"G:\My Drive\Fantasy Football\2023\airyards.csv") as f:
         lines = f.readlines()
         team_name = ''
         for l in lines:
             if("Name" not in l):
                 csvs = l.split(',')
                 player_name = csvs[1].replace('"', '').replace('*+', '').replace('*', '')
-                player_position = csvs[2].replace('"', '')
+                #player_position = csvs[2].replace('"', '')
                 #player_team = csvs[3].replace('"', '')
-                player_air_yards = csvs[4].replace('"', '')
-                player_tds = csvs[14].replace('"', '')
-                player_name = normalize_name(player_name)
+                player_air_yards = csvs[3].replace('"', '')
+                #player_tds = csvs[14].replace('"', '')
+                #player_name = normalize_name(player_name)
                 p = allPlayers.get(player_name)
                 if p is not None:
                     airYards_player = allPlayers[player_name]
                     airYards_player.set_ay(float(player_air_yards), 0)
-                    airYards_player.set_tds(int(player_tds))
+                    #airYards_player.set_tds(int(player_tds))
                     allPlayers[player_name] = airYards_player            
 
 
@@ -143,7 +144,7 @@ def run():
                 keeper_player.set_2020_is_keeper(True)
                 allPlayers[keeper_name] = keeper_player
 
-    with open(r"G:\My Drive\Fantasy Football\2022\2022_adp.csv") as f:
+    with open(r"G:\My Drive\Fantasy Football\2023\adp.csv") as f:
         lines = f.readlines()
         for l in lines:
             csvs = l.split(",")
@@ -155,8 +156,8 @@ def run():
                 adp_player = allPlayers[adp_name]
                 adp_player.set_adp(adp)
                 allPlayers[adp_name] = adp_player
-
-    with open(r"G:\My Drive\Fantasy Football\2022\notes.csv") as f:
+    '''
+    with open(r"G:\My Drive\Fantasy Football\2023\notes.csv") as f:
         lines = f.readlines()
         for l in lines:
             csvs = l.split(",")
@@ -165,31 +166,35 @@ def run():
             note_player = allPlayers[note_player_name]
             note_player.set_note(note_player_note)            
             notes[note_player_name] = note_player_note
+    
+    
         
     for k,v in allPlayers.items():
         note = notes.get(k)
         if note is not None:
             note_player = allPlayers[k]
-            note_player.set_note(note)            
+            note_player.set_note(note)          
     
-    '''with open(r"G:\My Drive\Fantasy Football\2022\notes.csv", 'w') as f:
+    with open(r"G:\My Drive\Fantasy Football\2022\notes.csv", 'w') as f:
         for key in notes:
             f.writelines('%s,%s\n' % (key, notes[key]))
-    '''    
-    
+      
+    '''
     json_string = "["
 
     for k,v in allPlayers.items():
         p = allPlayers[k]
         #json_string += '{"player_name" : "%s" , "nfl_team" : "%s" , "position" : "%s" , "adp" : %s , "cost" : %d , "drafted_by" : "%s" , "is_2019_keeper" : "%s", "is_2020_keeper" : "%s", "air_yards" : "%s" , "yards_per_carry" : "%s" , "rush_attempts" : "%s" , "TDs" : %s, "note": "%s"  , "is_available" : true},' % (p.player_name.replace('\n', ''), p.team, p.position, p.adp, p.cost, p.drafted_team.replace(' ', '').replace('\n', ''), p.is_2019_keeper, p.is_2020_keeper, p.ay, p.ypa_rush, p.rush_attempts, p.tds, p.note)
-        json_string += '{"player_name" : "%s" , "nfl_team" : "%s" , "position" : "%s" , "adp" : %s , "cost" : %d , "drafted_by" : "%s", "is_2020_keeper" : "%s" , "air_yards" : "%s" , "rush_attempts" : "%s", "yards_per_carry" : "%s", "TDs" : %s, "note": "%s"  , "is_available" : true },' % (p.player_name.replace('\n', ''), p.team, p.position, p.adp, p.cost, p.drafted_team.replace(' ', '').replace('\n', ''),  p.is_2020_keeper, p.ay, p.rush_attempts, p.ypa_rush, p.tds, p.note)
+        json_string += '{"player_name" : "%s" , "nfl_team" : "%s" , "position" : "%s" , "adp" : %s , "cost" : %d , "drafted_by" : "%s", "is_2020_keeper" : "%s" , "air_yards" : "%s" , "rush_attempts" : "%s", "yards_per_carry" : "%s", "TDs" : %s,  "is_available" : true },' % (p.player_name.replace('\n', ''), p.team, p.position, p.adp, p.cost, p.drafted_team.replace(' ', '').replace('\n', ''),  p.is_2020_keeper, p.ay, p.rush_attempts, p.ypa_rush, p.tds)
 
     json_string = json_string[:-1]
     json_string += "]"
 
     with open(r"C:\Users\patri\Documents\Sources\fantasy-football-client\client\src\data.json", 'w', encoding='utf-8') as f:
         json.dump(json_string, f, ensure_ascii=False, indent=4)
-    print(json_string)
+    #print(json_string)
+    pyperclip.copy(json_string)
+    json_string("Latest Copied to Clipboard")
     create_note()
 
 
