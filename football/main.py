@@ -5,8 +5,10 @@ from player import Player
 import json
 from utils import normalize_name
 from auto_completer import AutoCompleter
-from pyreadline import Readline
-readline = Readline()
+
+
+year = '2024'
+league = 'cbml'
 
 notes = dict()
 
@@ -18,16 +20,16 @@ def run():
     draftedPlayers = list()
     allPlayers = dict()
     playerNames = list()
-
-    with open(r"C:\Users\patri\Desktop\rotoworldrankings.csv") as f:
+    print(r'C:\Users\patri\Desktop\fantasy\%{year}\rankings.csv')
+    with open(r'C:\Users\patri\Desktop\fantasy\%{year}\rankings.csv') as f:
         lines = f.readlines()
         for l in lines:
             if("Player" not in l):
                 csvs = l.split(',')
-                rank_number = csvs[0].replace('"', '')
-                rank_player_name = csvs[1].replace('"', '')
+                #rank_number = csvs[0].replace('"', '')
+                rank_player_name = csvs[0].replace('"', '')
                 rank_postion = csvs[2].replace('"', '')
-                rank_nfl_team = csvs[3].replace('"', '')
+                rank_nfl_team = csvs[1].replace('"', '')
 
                 rank_player_name = normalize_name(rank_player_name)     
 
@@ -38,7 +40,7 @@ def run():
 
 
     teamNameSpillter = ",,"
-    with open(r"G:\My Drive\Fantasy Football\2023\2022_draft.csv") as f:
+    with open(r'C:\Users\patri\Desktop\fantasy\%{yeear}\lastyears_%{league}_draft.csv') as f:
         lines = f.readlines()
         team_name = ''
         for l in lines:
@@ -91,7 +93,7 @@ def run():
             draftedTeams.append(team)
             draftedPlayers = list()
 
-    with open(r"G:\My Drive\Fantasy Football\2023\airyards.csv") as f:
+    with open(r'C:\Users\patri\Desktop\fantasy\{%s}\airyards.csv'%year) as f:
         lines = f.readlines()
         team_name = ''
         for l in lines:
@@ -100,18 +102,19 @@ def run():
                 player_name = csvs[1].replace('"', '').replace('*+', '').replace('*', '')
                 #player_position = csvs[2].replace('"', '')
                 #player_team = csvs[3].replace('"', '')
-                player_air_yards = csvs[3].replace('"', '')
+                player_air_yards = csvs[7].replace('"', '')
+                player__wopr = csvs[14].replace('"', '')
                 #player_tds = csvs[14].replace('"', '')
                 #player_name = normalize_name(player_name)
                 p = allPlayers.get(player_name)
                 if p is not None:
                     airYards_player = allPlayers[player_name]
-                    airYards_player.set_ay(float(player_air_yards), 0)
+                    airYards_player.set_ay(float(player_air_yards), float(player__wopr))
                     #airYards_player.set_tds(int(player_tds))
                     allPlayers[player_name] = airYards_player            
 
 
-    with open(r"G:\My Drive\Fantasy Football\2022\2021_runningback_workload.csv") as f:
+    with open(r'C:\Users\patri\Desktop\fantasy\{%s}\2023_runningback_workload.csv'%year) as f:
         lines = f.readlines()
         for l in lines:
             if("Name" not in l):
@@ -131,7 +134,7 @@ def run():
                     rush_player.add_tds(int(player_td))
                     allPlayers[player_name] = rush_player            
 
-    with open(r"G:\My Drive\Fantasy Football\2022\2022_keepers.csv") as f:
+    with open(r'C:\Users\patri\Desktop\fantasy\{%s}\2023_keepers.csv'%year) as f:
         lines = f.readlines()
         for l in lines:
             csvs = l.split(",")
@@ -144,12 +147,12 @@ def run():
                 keeper_player.set_2020_is_keeper(True)
                 allPlayers[keeper_name] = keeper_player
 
-    with open(r"G:\My Drive\Fantasy Football\2023\adp.csv") as f:
+    with open(r'C:\Users\patri\Desktop\fantasy\{%s}\adp.csv'%year) as f:
         lines = f.readlines()
         for l in lines:
             csvs = l.split(",")
-            adp_name = csvs[1].replace('"', '')
-            adp = csvs[14].replace('"', '')
+            adp_name = csvs[0].replace('"', '')
+            adp = csvs[3].replace('"', '')
             adp = adp.replace('\n', '')
             p = allPlayers.get(adp_name)
             if p is not None:
@@ -185,7 +188,7 @@ def run():
     for k,v in allPlayers.items():
         p = allPlayers[k]
         #json_string += '{"player_name" : "%s" , "nfl_team" : "%s" , "position" : "%s" , "adp" : %s , "cost" : %d , "drafted_by" : "%s" , "is_2019_keeper" : "%s", "is_2020_keeper" : "%s", "air_yards" : "%s" , "yards_per_carry" : "%s" , "rush_attempts" : "%s" , "TDs" : %s, "note": "%s"  , "is_available" : true},' % (p.player_name.replace('\n', ''), p.team, p.position, p.adp, p.cost, p.drafted_team.replace(' ', '').replace('\n', ''), p.is_2019_keeper, p.is_2020_keeper, p.ay, p.ypa_rush, p.rush_attempts, p.tds, p.note)
-        json_string += '{"player_name" : "%s" , "nfl_team" : "%s" , "position" : "%s" , "adp" : %s , "cost" : %d , "drafted_by" : "%s", "is_2020_keeper" : "%s" , "air_yards" : "%s" , "rush_attempts" : "%s", "yards_per_carry" : "%s", "TDs" : %s,  "is_available" : true },' % (p.player_name.replace('\n', ''), p.team, p.position, p.adp, p.cost, p.drafted_team.replace(' ', '').replace('\n', ''),  p.is_2020_keeper, p.ay, p.rush_attempts, p.ypa_rush, p.tds)
+        json_string += '{"player_name" : "%s" , "nfl_team" : "%s" , "position" : "%s" , "adp" : %s , "cost" : %d , "drafted_by" : "%s", "is_2020_keeper" : "%s" , "air_yards" : "%s" , "wopr" : "%s", "rush_attempts" : "%s", "yards_per_carry" : "%s", "TDs" : %s,  "is_available" : true },' % (p.player_name.replace('\n', ''), p.team, p.position, p.adp, p.cost, p.drafted_team.replace(' ', '').replace('\n', ''),  p.is_2020_keeper, p.ay, p.wopr, p.rush_attempts, p.ypa_rush, p.tds)
 
     json_string = json_string[:-1]
     json_string += "]"
